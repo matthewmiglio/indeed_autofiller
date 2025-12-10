@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "Indeed Autofiller",
+  "version": "1.0.0",
+  "description": "Automatically fills repeated information on Indeed job application pages",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "*://*.indeed.com/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.indeed.com/*"],
+      "js": ["content/content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background/background.js"
+  },
+  "commands": {
+    "trigger-autofill": {
+      "suggested_key": {
+        "default": "Alt+Shift+F"
+      },
+      "description": "Trigger autofill on current page"
+    }
+  }
+}

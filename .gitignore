@@ -1,0 +1,12 @@
+# Claude Code generated files
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+claude_output/
+
+# Node modules (if any)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
