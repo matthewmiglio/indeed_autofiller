@@ -16,6 +16,7 @@
 
     <div class="tabs">
       <button class="tab active" data-tab="contact">Contact</button>
+      <button class="tab" data-tab="experience">Experience</button>
       <button class="tab" data-tab="questions">Questions</button>
       <button class="tab" data-tab="demographics">Demographics</button>
       <button class="tab" data-tab="settings">Settings</button>
@@ -99,6 +100,19 @@
       <div class="form-group">
         <label for="zipCode">Postal Code</label>
         <input type="text" id="zipCode" placeholder="92101">
+      </div>
+    </div>
+
+    <!-- Job Experience Tab -->
+    <div id="experience" class="tab-content">
+      <p class="note">For "Enter a job that shows relevant experience" pages</p>
+      <div class="form-group">
+        <label for="jobTitle">Job Title</label>
+        <input type="text" id="jobTitle" placeholder="Software Engineer">
+      </div>
+      <div class="form-group">
+        <label for="companyName">Company</label>
+        <input type="text" id="companyName" placeholder="Acme Corp">
       </div>
     </div>
 
@@ -222,6 +236,10 @@
       <div class="form-group checkbox">
         <input type="checkbox" id="autoClickResumeContinue">
         <label for="autoClickResumeContinue">Auto-click Continue on resume page</label>
+      </div>
+      <div class="form-group checkbox">
+        <input type="checkbox" id="autoSubmitReview">
+        <label for="autoSubmitReview">Auto-submit application review pages</label>
       </div>
       <hr>
       <button id="clearDataBtn" class="btn btn-danger">Clear All Data</button>

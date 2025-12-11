@@ -91,6 +91,21 @@
         }
       }
 
+      // Check if we're on the job experience page
+      const experienceFilled = handleJobExperiencePage(settings);
+      if (experienceFilled) {
+        filledCount += experienceFilled;
+      }
+
+      // Check if we're on the review page and should auto-submit
+      if (settings.autoSubmitReview) {
+        const reviewPageSubmitted = handleReviewPageSubmit();
+        if (reviewPageSubmitted) {
+          console.log('Indeed Autofiller: Submitted application on review page');
+          return; // Page will navigate
+        }
+      }
+
       // Find all question items on the page
       const questionItems = document.querySelectorAll('.ia-Questions-item, [class*="Questions-item"]');
 
@@ -114,8 +129,8 @@
 
       console.log(`Indeed Autofiller: Filled ${filledCount} fields`);
 
-      // Show notification if enabled
-      if (settings.showNotification !== false) {
+      // Show notification if enabled and fields were filled
+      if (settings.showNotification !== false && filledCount > 0) {
         showNotification(filledCount);
       }
     } catch (error) {
@@ -137,6 +152,49 @@
     const continueBtn = resumeForm.querySelector('[data-testid="continue-button"]');
     if (continueBtn) {
       continueBtn.click();
+      return true;
+    }
+
+    return false;
+  }
+
+  // Handle job experience page (Job Title and Company)
+  function handleJobExperiencePage(settings) {
+    let count = 0;
+
+    // Check for job title input
+    const jobTitleInput = document.querySelector('[data-testid="job-title-input"], input[name="jobTitle"], #job-title-input');
+    if (jobTitleInput && settings.jobTitle && !jobTitleInput.value) {
+      setInputValue(jobTitleInput, settings.jobTitle);
+      count++;
+    }
+
+    // Check for company name input
+    const companyInput = document.querySelector('[data-testid="company-name-input"], input[name="companyName"], #company-name-input');
+    if (companyInput && settings.companyName && !companyInput.value) {
+      setInputValue(companyInput, settings.companyName);
+      count++;
+    }
+
+    return count;
+  }
+
+  // Handle review page auto-submit
+  function handleReviewPageSubmit() {
+    // Check if we're on a review page
+    const reviewHeading = document.querySelector('h1');
+    if (!reviewHeading || !reviewHeading.textContent.toLowerCase().includes('review your application')) {
+      return false;
+    }
+
+    // Also check for the preview module
+    const previewModule = document.querySelector('#mosaic-provider-module-apply-preview, [id*="preview"]');
+    if (!previewModule) return false;
+
+    // Find and click the submit button
+    const submitBtn = document.querySelector('[data-testid="submit-button"], button[type="submit"]');
+    if (submitBtn && submitBtn.textContent.toLowerCase().includes('submit')) {
+      submitBtn.click();
       return true;
     }
 

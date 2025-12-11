@@ -1,10 +1,14 @@
 // Field IDs to save/load
 const FIELDS = {
   contact: ['phone', 'address', 'city', 'cityState', 'state', 'zipCode'],
+  experience: ['jobTitle', 'companyName'],
   questions: ['securityClearance', 'backgroundCheck', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
   demographics: ['fullName', 'gender', 'ethnicity', 'veteranStatus', 'disabilityStatus'],
-  settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue']
+  settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue', 'autoSubmitReview']
 };
+
+// Tab order for auto-advance
+const TAB_ORDER = ['contact', 'experience', 'questions', 'demographics', 'settings'];
 
 // Load saved settings when popup opens
 document.addEventListener('DOMContentLoaded', loadSettings);
@@ -69,9 +73,36 @@ async function saveSettings() {
 
     await chrome.storage.sync.set(data);
     showStatus('Settings saved!');
+
+    // Auto-advance to next tab
+    advanceToNextTab();
   } catch (error) {
     console.error('Error saving settings:', error);
     showStatus('Error saving settings', true);
+  }
+}
+
+function advanceToNextTab() {
+  const activeTab = document.querySelector('.tab.active');
+  if (!activeTab) return;
+
+  const currentTabName = activeTab.dataset.tab;
+  const currentIndex = TAB_ORDER.indexOf(currentTabName);
+
+  // If not the last tab, advance to next
+  if (currentIndex < TAB_ORDER.length - 1) {
+    const nextTabName = TAB_ORDER[currentIndex + 1];
+    const nextTab = document.querySelector(`.tab[data-tab="${nextTabName}"]`);
+
+    if (nextTab) {
+      // Remove active class from all tabs and content
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+      // Add active class to next tab and corresponding content
+      nextTab.classList.add('active');
+      document.getElementById(nextTabName).classList.add('active');
+    }
   }
 }
 
