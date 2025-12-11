@@ -9,7 +9,9 @@
     // Contact Information
     'cell phone': { key: 'phone', type: 'text' },
     'phone': { key: 'phone', type: 'text' },
+    'street address': { key: 'address', type: 'text' },
     'address': { key: 'address', type: 'text' },
+    'city, state': { key: 'cityState', type: 'combobox' },
     'city': { key: 'city', type: 'text' },
     'state': { key: 'state', type: 'select' },
     'postal code': { key: 'zipCode', type: 'text' },
@@ -20,6 +22,16 @@
     'security clearance': { key: 'securityClearance', type: 'radio' },
     'background check': { key: 'backgroundCheck', type: 'radio' },
     'eligible to pass a background': { key: 'backgroundCheck', type: 'radio' },
+
+    // Referral Questions (auto-answer No)
+    'referred by': { key: 'referralQuestion', type: 'radio' },
+    'were you referred': { key: 'referralQuestion', type: 'radio' },
+
+    // Acknowledgment Questions (auto-answer Yes)
+    'acknowledge your understanding': { key: 'acknowledgmentQuestion', type: 'radio' },
+    'please acknowledge': { key: 'acknowledgmentQuestion', type: 'radio' },
+    'acknowledge and agree': { key: 'acknowledgmentQuestion', type: 'radio' },
+    'required to work onsite': { key: 'acknowledgmentQuestion', type: 'radio' },
 
     // Demographics
     'gender': { key: 'gender', type: 'radio', demographic: true },
@@ -70,6 +82,15 @@
       const settings = await chrome.storage.sync.get(null);
       let filledCount = 0;
 
+      // Check if we're on the resume selection page and should auto-continue
+      if (settings.autoClickResumeContinue) {
+        const resumePageContinued = handleResumePageContinue();
+        if (resumePageContinued) {
+          console.log('Indeed Autofiller: Clicked continue on resume page');
+          return; // Page will navigate, no need to continue
+        }
+      }
+
       // Find all question items on the page
       const questionItems = document.querySelectorAll('.ia-Questions-item, [class*="Questions-item"]');
 
@@ -100,6 +121,26 @@
     } catch (error) {
       console.error('Indeed Autofiller: Error during autofill', error);
     }
+  }
+
+  // Handle resume page auto-continue
+  function handleResumePageContinue() {
+    // Check if we're on a resume selection page
+    const resumeForm = document.querySelector('[data-testid="resume-selection-form"]');
+    if (!resumeForm) return false;
+
+    // Check if a resume is already selected
+    const selectedResume = resumeForm.querySelector('input[type="radio"][checked], input[type="radio"]:checked');
+    if (!selectedResume) return false;
+
+    // Find and click the continue button
+    const continueBtn = resumeForm.querySelector('[data-testid="continue-button"]');
+    if (continueBtn) {
+      continueBtn.click();
+      return true;
+    }
+
+    return false;
   }
 
   // Process a single question item
@@ -147,6 +188,8 @@
           return fillRadioField(container, value);
         case 'date':
           return fillDateField(container, value);
+        case 'combobox':
+          return fillComboboxField(container, value);
         default:
           return false;
       }
@@ -229,6 +272,26 @@
     return true;
   }
 
+  // Fill combobox/autocomplete field (like City, State)
+  function fillComboboxField(container, value) {
+    const input = container.querySelector('input[role="combobox"], input[data-testid*="locality"]');
+    if (!input || input.value) return false;
+
+    setInputValue(input, value);
+
+    // Trigger additional events for autocomplete to work
+    input.focus();
+    const inputEvent = new InputEvent('input', { bubbles: true, data: value });
+    input.dispatchEvent(inputEvent);
+
+    // Give autocomplete time to show suggestions, then blur to accept
+    setTimeout(() => {
+      input.blur();
+    }, 100);
+
+    return true;
+  }
+
   // Direct field detection for pages without question wrappers
   function fillDirectFields(settings) {
     let count = 0;
@@ -239,6 +302,7 @@
     inputs.forEach(input => {
       const name = input.name?.toLowerCase() || '';
       const id = input.id?.toLowerCase() || '';
+      const testId = input.getAttribute('data-testid')?.toLowerCase() || '';
 
       // Phone
       if ((name.includes('phone') || id.includes('phone')) && settings.phone && !input.value) {
@@ -252,8 +316,16 @@
         count++;
       }
 
+      // City, State combined field (combobox)
+      if ((name.includes('locality') || id.includes('locality') || testId.includes('locality')) &&
+        settings.cityState && !input.value) {
+        setInputValue(input, settings.cityState);
+        count++;
+      }
+
       // City
-      if ((name.includes('city') || id.includes('city')) && settings.city && !input.value) {
+      if ((name.includes('city') || id.includes('city')) && !name.includes('locality') &&
+        settings.city && !input.value) {
         setInputValue(input, settings.city);
         count++;
       }
