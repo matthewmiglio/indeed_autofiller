@@ -1,9 +1,9 @@
 // Field IDs to save/load
 const FIELDS = {
-  contact: ['phone', 'address', 'city', 'state', 'zipCode'],
-  questions: ['securityClearance', 'backgroundCheck', 'textOptIn', 'privacyPolicy'],
+  contact: ['phone', 'address', 'city', 'cityState', 'state', 'zipCode'],
+  questions: ['securityClearance', 'backgroundCheck', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
   demographics: ['fullName', 'gender', 'ethnicity', 'veteranStatus', 'disabilityStatus'],
-  settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate']
+  settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue']
 };
 
 // Load saved settings when popup opens

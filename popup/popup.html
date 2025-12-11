@@ -36,6 +36,10 @@
         <input type="text" id="city" placeholder="San Diego">
       </div>
       <div class="form-group">
+        <label for="cityState">City, State (combined field)</label>
+        <input type="text" id="cityState" placeholder="San Diego, CA">
+      </div>
+      <div class="form-group">
         <label for="state">State</label>
         <select id="state">
           <option value="">Select State</option>
@@ -131,6 +135,20 @@
           <option value="yes">Yes - Auto accept</option>
         </select>
       </div>
+      <div class="form-group">
+        <label for="referralQuestion">Were you referred? (answer No)</label>
+        <select id="referralQuestion">
+          <option value="">Don't fill</option>
+          <option value="No">No - Auto answer</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="acknowledgmentQuestion">Acknowledgment questions (answer Yes)</label>
+        <select id="acknowledgmentQuestion">
+          <option value="">Don't fill</option>
+          <option value="Yes">Yes - Auto accept</option>
+        </select>
+      </div>
     </div>
 
     <!-- Demographics Tab -->
@@ -200,6 +218,10 @@
       <div class="form-group checkbox">
         <input type="checkbox" id="autoFillDate" checked>
         <label for="autoFillDate">Auto-fill today's date</label>
+      </div>
+      <div class="form-group checkbox">
+        <input type="checkbox" id="autoClickResumeContinue">
+        <label for="autoClickResumeContinue">Auto-click Continue on resume page</label>
       </div>
       <hr>
       <button id="clearDataBtn" class="btn btn-danger">Clear All Data</button>
