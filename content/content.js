@@ -23,9 +23,31 @@
     'background check': { key: 'backgroundCheck', type: 'radio' },
     'eligible to pass a background': { key: 'backgroundCheck', type: 'radio' },
 
+    // Work Authorization
+    'authorized to work': { key: 'authorizedToWork', type: 'radio' },
+    'legally authorized': { key: 'authorizedToWork', type: 'radio' },
+    'work lawfully': { key: 'authorizedToWork', type: 'radio' },
+    'require sponsorship': { key: 'requireSponsorship', type: 'radio' },
+    'will you now or in the future require sponsorship': { key: 'requireSponsorship', type: 'radio' },
+
+    // Age Verification
+    'over the age of 18': { key: 'overAge18', type: 'radio' },
+    'at least 18': { key: 'overAge18', type: 'radio' },
+    'are you 18': { key: 'overAge18', type: 'radio' },
+
+    // Currently Employed Questions (auto-answer No)
+    'currently employed with': { key: 'currentlyEmployed', type: 'radio' },
+    'are you currently employed': { key: 'currentlyEmployed', type: 'radio' },
+
     // Referral Questions (auto-answer No)
     'referred by': { key: 'referralQuestion', type: 'radio' },
     'were you referred': { key: 'referralQuestion', type: 'radio' },
+    'who referred you': { key: 'referralName', type: 'text' },
+    'if so, who referred you': { key: 'referralName', type: 'text' },
+
+    // SMS/Text Consent (auto-answer Yes)
+    'sms consent': { key: 'smsConsent', type: 'radio' },
+    'text message consent': { key: 'smsConsent', type: 'radio' },
 
     // Acknowledgment Questions (auto-answer Yes)
     'acknowledge your understanding': { key: 'acknowledgmentQuestion', type: 'radio' },
@@ -95,6 +117,15 @@
       const experienceFilled = handleJobExperiencePage(settings);
       if (experienceFilled) {
         filledCount += experienceFilled;
+      }
+
+      // Check if we're on the success page and should auto-close
+      if (settings.autoCloseAfterSubmit) {
+        const successPageClosed = handleSuccessPageClose();
+        if (successPageClosed) {
+          console.log('Indeed Autofiller: Closed tab after successful submission');
+          return; // Tab will close
+        }
       }
 
       // Check if we're on the review page and should auto-submit
@@ -179,6 +210,38 @@
     return count;
   }
 
+  // Handle success page auto-close
+  function handleSuccessPageClose() {
+    // Check if we're on a success/confirmation page
+    // Look for common success indicators
+    const successIndicators = [
+      'application submitted',
+      'application complete',
+      'thank you for applying',
+      'your application has been submitted',
+      'successfully submitted',
+      'application received'
+    ];
+
+    const pageText = document.body.textContent.toLowerCase();
+    const hasSuccessMessage = successIndicators.some(indicator => pageText.includes(indicator));
+
+    // Also check for success page URL patterns
+    const urlIndicatesSuccess = window.location.href.includes('confirmation') ||
+      window.location.href.includes('success') ||
+      window.location.href.includes('submitted');
+
+    if (hasSuccessMessage || urlIndicatesSuccess) {
+      // Close the tab after a short delay to allow user to see the success message
+      setTimeout(() => {
+        window.close();
+      }, 2000);
+      return true;
+    }
+
+    return false;
+  }
+
   // Handle review page auto-submit
   function handleReviewPageSubmit() {
     // Check if we're on a review page
@@ -191,9 +254,13 @@
     const previewModule = document.querySelector('#mosaic-provider-module-apply-preview, [id*="preview"]');
     if (!previewModule) return false;
 
-    // Find and click the submit button
-    const submitBtn = document.querySelector('[data-testid="submit-button"], button[type="submit"]');
+    // Find and click the submit button - try multiple selectors
+    const submitBtn = document.querySelector('[data-testid="submit-application-button"]') ||
+      document.querySelector('button[name="submit-application"]') ||
+      document.querySelector('button[type="submit"][data-testid*="submit"]');
+
     if (submitBtn && submitBtn.textContent.toLowerCase().includes('submit')) {
+      console.log('Indeed Autofiller: Clicking submit button on review page');
       submitBtn.click();
       return true;
     }
@@ -221,9 +288,20 @@
           continue;
         }
 
-        const value = config.key === 'autoDate'
-          ? (settings.autoFillDate !== false ? getTodayDate() : null)
-          : settings[config.key];
+        let value;
+
+        // Handle special cases with hardcoded values
+        if (config.key === 'requireSponsorship') {
+          value = 'No'; // Always answer No for sponsorship requirement
+        } else if (config.key === 'smsConsent') {
+          value = 'Yes'; // Always answer Yes for SMS consent
+        } else if (config.key === 'referralName') {
+          value = 'N/A'; // Always answer N/A for referral name
+        } else if (config.key === 'autoDate') {
+          value = settings.autoFillDate !== false ? getTodayDate() : null;
+        } else {
+          value = settings[config.key];
+        }
 
         if (!value) continue;
 
@@ -271,13 +349,34 @@
     const select = container.querySelector('select');
     if (!select) return false;
 
+    // Map numeric ethnicity values to text alternatives
+    // Values based on Indeed's demographic question format
+    const ethnicityMap = {
+      '1': ['american indian', 'alaska native', 'alaskan native'],
+      '2': 'asian',
+      '4': ['black', 'african american'],
+      '8': ['hispanic', 'latino'],
+      '16': 'white',
+      '32': ['native hawaiian', 'pacific islander'],
+      '64': ['two or more', 'two or more races'],
+      '128': ['decline', 'do not wish', 'not specified', 'prefer not']
+    };
+
     // Try to find option by value or label
     const options = Array.from(select.options);
-    const option = options.find(opt =>
+    let option = options.find(opt =>
       opt.value === value ||
       opt.value.toUpperCase() === value.toUpperCase() ||
       opt.label?.toLowerCase().includes(value.toLowerCase())
     );
+
+    // If no match and value is numeric, try ethnicity mapping
+    if (!option && ethnicityMap[value]) {
+      const matches = Array.isArray(ethnicityMap[value]) ? ethnicityMap[value] : [ethnicityMap[value]];
+      option = options.find(opt =>
+        matches.some(m => opt.label?.toLowerCase().includes(m) || opt.text?.toLowerCase().includes(m))
+      );
+    }
 
     if (option) {
       select.value = option.value;
@@ -293,12 +392,17 @@
     const radios = container.querySelectorAll('input[type="radio"]');
     if (!radios.length) return false;
 
+    // Map numeric demographic values to text alternatives
+    const genderMap = { '1': 'male', '2': 'female', '3': ['decline', 'undeclared', 'other'] };
+    const veteranMap = { '51': 'protected veteran', '52': 'not a protected veteran', '53': ['do not wish', 'undeclared'] };
+    const disabilityMap = { '1': ['yes', 'have a disability'], '2': ['no', 'do not have'], '3': ['do not want', 'undeclared'] };
+
     for (const radio of radios) {
       const radioValue = radio.value.toLowerCase();
       const labelEl = container.querySelector(`label[for="${radio.id}"]`);
-      const labelText = labelEl?.textContent?.toLowerCase() || '';
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
 
-      // Match by value or label text
+      // Direct match by value or label text
       if (radioValue === value.toLowerCase() ||
         labelText.includes(value.toLowerCase()) ||
         (value === 'Yes' && (radioValue === 'yes' || labelText.includes('yes'))) ||
@@ -307,9 +411,39 @@
         triggerEvents(radio);
         return true;
       }
+
+      // Try gender mapping (numeric to text)
+      if (genderMap[value]) {
+        const matches = Array.isArray(genderMap[value]) ? genderMap[value] : [genderMap[value]];
+        if (matches.some(m => labelText.includes(m))) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
+
+      // Try veteran mapping (numeric to text)
+      if (veteranMap[value]) {
+        const matches = Array.isArray(veteranMap[value]) ? veteranMap[value] : [veteranMap[value]];
+        if (matches.some(m => labelText.includes(m))) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
+
+      // Try disability mapping (numeric to text)
+      if (disabilityMap[value]) {
+        const matches = Array.isArray(disabilityMap[value]) ? disabilityMap[value] : [disabilityMap[value]];
+        if (matches.some(m => labelText.includes(m))) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
     }
 
-    // Try matching by numeric value for demographic fields
+    // Try matching by exact numeric value for demographic fields
     for (const radio of radios) {
       if (radio.value === value) {
         radio.checked = true;

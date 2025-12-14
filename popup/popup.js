@@ -2,9 +2,9 @@
 const FIELDS = {
   contact: ['phone', 'address', 'city', 'cityState', 'state', 'zipCode'],
   experience: ['jobTitle', 'companyName'],
-  questions: ['securityClearance', 'backgroundCheck', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
+  questions: ['securityClearance', 'backgroundCheck', 'authorizedToWork', 'overAge18', 'currentlyEmployed', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
   demographics: ['fullName', 'gender', 'ethnicity', 'veteranStatus', 'disabilityStatus'],
-  settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue', 'autoSubmitReview']
+  settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue', 'autoSubmitReview', 'autoCloseAfterSubmit']
 };
 
 // Tab order for auto-advance
