@@ -35,6 +35,10 @@ document.getElementById('autofillBtn').addEventListener('click', triggerAutofill
 // Clear data button
 document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
 
+// Auto-compile City, State combo field
+document.getElementById('city').addEventListener('input', updateCityState);
+document.getElementById('state').addEventListener('change', updateCityState);
+
 async function loadSettings() {
   try {
     const data = await chrome.storage.sync.get(null);
@@ -50,6 +54,9 @@ async function loadSettings() {
         element.value = data[fieldId] || '';
       }
     });
+
+    // Auto-compile City, State combo after loading
+    updateCityState();
   } catch (error) {
     console.error('Error loading settings:', error);
   }
@@ -158,4 +165,20 @@ function showStatus(message, isError = false) {
   setTimeout(() => {
     status.textContent = '';
   }, 3000);
+}
+
+function updateCityState() {
+  const city = document.getElementById('city').value.trim();
+  const state = document.getElementById('state').value;
+
+  // Only update if both city and state have values
+  if (city && state) {
+    document.getElementById('cityState').value = `${city}, ${state}`;
+  } else if (city) {
+    // If only city is filled, just show the city
+    document.getElementById('cityState').value = city;
+  } else {
+    // Clear the combo field if city is empty
+    document.getElementById('cityState').value = '';
+  }
 }
