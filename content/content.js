@@ -207,6 +207,18 @@
       count++;
     }
 
+    // If we filled fields and auto-continue is enabled, click the continue button
+    if (count > 0 && settings.autoClickResumeContinue) {
+      const continueBtn = document.querySelector('[data-testid="continue-button"]');
+      if (continueBtn) {
+        console.log('Indeed Autofiller: Clicking continue button after filling job experience');
+        // Add a small delay to ensure the form processes the input
+        setTimeout(() => {
+          continueBtn.click();
+        }, 500);
+      }
+    }
+
     return count;
   }
 
