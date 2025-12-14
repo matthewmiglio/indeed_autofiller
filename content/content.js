@@ -258,26 +258,50 @@
   function handleReviewPageSubmit() {
     // Check if we're on a review page
     const reviewHeading = document.querySelector('h1');
-    if (!reviewHeading || !reviewHeading.textContent.toLowerCase().includes('review your application')) {
+    const pageText = document.body.textContent.toLowerCase();
+
+    if (!reviewHeading && !pageText.includes('review your application')) {
       return false;
     }
 
-    // Also check for the preview module
-    const previewModule = document.querySelector('#mosaic-provider-module-apply-preview, [id*="preview"]');
-    if (!previewModule) return false;
+    if (reviewHeading && !reviewHeading.textContent.toLowerCase().includes('review your application') &&
+        !pageText.includes('review your application')) {
+      return false;
+    }
 
-    // Find and click the submit button - try multiple selectors
-    const submitBtn = document.querySelector('[data-testid="submit-application-button"]') ||
-      document.querySelector('button[name="submit-application"]') ||
-      document.querySelector('button[type="submit"][data-testid*="submit"]');
+    // Function to find and click the submit button
+    const findAndClickSubmit = () => {
+      // Find and click the submit button - try multiple selectors
+      const submitBtn = document.querySelector('[data-testid="submit-application-button"]') ||
+        document.querySelector('button[name="submit-application"]') ||
+        document.querySelector('button[type="submit"]') ||
+        document.querySelector('button[type="submit"][data-testid*="submit"]');
 
-    if (submitBtn && submitBtn.textContent.toLowerCase().includes('submit')) {
-      console.log('Indeed Autofiller: Clicking submit button on review page');
-      submitBtn.click();
+      if (submitBtn) {
+        const buttonText = submitBtn.textContent.toLowerCase();
+        if (buttonText.includes('submit') && buttonText.includes('application')) {
+          console.log('Indeed Autofiller: Clicking submit button on review page');
+          submitBtn.click();
+          return true;
+        }
+      }
+      return false;
+    };
+
+    // Try immediately
+    if (findAndClickSubmit()) {
       return true;
     }
 
-    return false;
+    // If button not found, try again after a short delay (button might still be rendering)
+    setTimeout(() => {
+      if (findAndClickSubmit()) {
+        console.log('Indeed Autofiller: Submit button found on retry');
+      }
+    }, 1000);
+
+    // Return true to indicate we're on a review page (even if button not clicked yet)
+    return true;
   }
 
   // Process a single question item
