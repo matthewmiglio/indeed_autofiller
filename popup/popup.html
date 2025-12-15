@@ -101,6 +101,10 @@
         <label for="zipCode">Postal Code</label>
         <input type="text" id="zipCode" placeholder="92101">
       </div>
+      <div class="form-group">
+        <label for="country">Country</label>
+        <input type="text" id="country" placeholder="United States" value="United States">
+      </div>
     </div>
 
     <!-- Job Experience Tab -->
@@ -113,6 +117,25 @@
       <div class="form-group">
         <label for="companyName">Company</label>
         <input type="text" id="companyName" placeholder="Acme Corp">
+      </div>
+      <div class="form-group">
+        <label for="middleName">Middle Name</label>
+        <input type="text" id="middleName" placeholder="(leave blank if none)">
+      </div>
+      <div class="form-group">
+        <label for="degreeMajor">Degree Major</label>
+        <input type="text" id="degreeMajor" placeholder="Computer Science">
+      </div>
+      <div class="form-group">
+        <label for="securityClearanceLevel">DoD Security Clearance Level</label>
+        <select id="securityClearanceLevel">
+          <option value="">Don't fill</option>
+          <option value="none">N/A - None</option>
+          <option value="secret">Secret</option>
+          <option value="top_secret">Top Secret</option>
+          <option value="ts_sci">Top Secret/SCI</option>
+          <option value="ts_sci_poly">Top Secret/SCI with Poly</option>
+        </select>
       </div>
 
       <p class="note">Years of Experience (leave blank to skip)</p>
@@ -145,6 +168,16 @@
         <input type="number" id="yearsOfRequirementsGathering" placeholder="4" min="0">
       </div>
 
+      <p class="note">Skills Experience (for radio-button questions)</p>
+      <div class="form-group">
+        <label for="yearsOfJavaScript">Years of JavaScript</label>
+        <input type="number" id="yearsOfJavaScript" placeholder="5" min="0">
+      </div>
+      <div class="form-group">
+        <label for="yearsOfB2BEcommerce">Years of B2B Ecommerce</label>
+        <input type="number" id="yearsOfB2BEcommerce" placeholder="0" min="0">
+      </div>
+
       <p class="note">Availability</p>
       <div class="form-group">
         <label for="availableTimes">Available Times</label>
@@ -162,6 +195,42 @@
       <div class="form-group">
         <label for="githubUrl">GitHub Profile/Repo URL</label>
         <input type="text" id="githubUrl" placeholder="https://github.com/yourusername">
+      </div>
+
+      <p class="note">Work Authorization</p>
+      <div class="form-group">
+        <label for="authorizedToWork">Legally authorized to work in US?</label>
+        <select id="authorizedToWork">
+          <option value="">Don't fill</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="requireSponsorship">Will require visa sponsorship?</label>
+        <select id="requireSponsorship">
+          <option value="">Don't fill</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="overAge18">Are you at least 18 years old?</label>
+        <select id="overAge18">
+          <option value="">Don't fill</option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="educationLevel">Highest level of education</label>
+        <select id="educationLevel">
+          <option value="">Don't fill</option>
+          <option value="high_school">High School Diploma / GED</option>
+          <option value="associates">Associate's Degree</option>
+          <option value="bachelors">Bachelor's Degree</option>
+          <option value="graduate">Graduate Degree (Master's/PhD)</option>
+        </select>
       </div>
 
       <p class="note">Yes/No Questions</p>

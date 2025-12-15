@@ -25,10 +25,35 @@
     'github repo': { key: 'githubUrl', type: 'text' },
     'github profile': { key: 'githubUrl', type: 'text' },
 
-    // How did you hear about this job (auto-answer "Indeed.com")
-    'how did you hear': { key: 'howDidYouHear', type: 'text' },
-    'how did you find': { key: 'howDidYouHear', type: 'text' },
-    'where did you hear': { key: 'howDidYouHear', type: 'text' },
+    // How did you hear about this job/position (auto-answer "Indeed")
+    'how did you hear': { key: 'howDidYouHear', type: 'howDidYouHearSelect' },
+    'how did you find': { key: 'howDidYouHear', type: 'howDidYouHearSelect' },
+    'where did you hear': { key: 'howDidYouHear', type: 'howDidYouHearSelect' },
+    'how did you hear about this position': { key: 'howDidYouHear', type: 'howDidYouHearSelect' },
+
+    // Zip code questions
+    'what is your zip code': { key: 'zipCode', type: 'text' },
+    'if in the united states, what is your zip code': { key: 'zipCode', type: 'text' },
+
+    // Country selection (dropdown or text)
+    'select country': { key: 'country', type: 'countrySelect' },
+    'country': { key: 'country', type: 'countryText' },
+
+    // State as text input (some forms use text instead of dropdown)
+    'state': { key: 'state', type: 'stateText' },
+
+    // Middle Name
+    'middle name': { key: 'middleName', type: 'text' },
+
+    // Source dropdown (variant of "how did you hear")
+    'source': { key: 'howDidYouHear', type: 'howDidYouHearSelect' },
+
+    // DoD Security Clearance Level
+    'dod security clearance': { key: 'securityClearanceLevel', type: 'securityClearanceSelect' },
+    'security clearance level': { key: 'securityClearanceLevel', type: 'securityClearanceSelect' },
+
+    // Degree Major
+    'degree major': { key: 'degreeMajor', type: 'text' },
 
     // Application Questions
     'security clearance': { key: 'securityClearance', type: 'radio' },
@@ -50,13 +75,43 @@
     'at least 18': { key: 'overAge18', type: 'radio' },
     'are you 18': { key: 'overAge18', type: 'radio' },
 
+    // Education Level
+    'highest level of education': { key: 'educationLevel', type: 'educationAuto' },
+    'level of completed education': { key: 'educationLevel', type: 'educationAuto' },
+    'highest level of completed education': { key: 'educationLevel', type: 'educationAuto' },
+
+    // Previously Employed by Company (always No)
+    'have you ever been employed by this company': { key: 'previouslyEmployed', type: 'radio', fixedValue: 'No' },
+    'employed by this company': { key: 'previouslyEmployed', type: 'radio', fixedValue: 'No' },
+    'ever been employed by': { key: 'previouslyEmployed', type: 'radio', fixedValue: 'No' },
+    'have you ever worked at': { key: 'previouslyEmployed', type: 'radio', fixedValue: 'No' },
+
+    // Currently Attending/Associated with Company (always No)
+    'currently attending a': { key: 'currentlyAttending', type: 'radio', fixedValue: 'No' },
+    'are you currently attending': { key: 'currentlyAttending', type: 'radio', fixedValue: 'No' },
+
+    // Work Setting Preference (always No preference)
+    'preferred work setting': { key: 'workSettingPreference', type: 'workSetting', fixedValue: 'no preference' },
+    'work setting': { key: 'workSettingPreference', type: 'workSetting', fixedValue: 'no preference' },
+    'select your preferred work': { key: 'workSettingPreference', type: 'workSetting', fixedValue: 'no preference' },
+
+    // Skills Experience (radio-button ranges)
+    'years have you been working specifically with javascript': { key: 'yearsOfJavaScript', type: 'experienceRange' },
+    'years of javascript': { key: 'yearsOfJavaScript', type: 'experienceRange' },
+    'experience with javascript': { key: 'yearsOfJavaScript', type: 'experienceRange' },
+
+    // B2B Ecommerce Experience
+    'b2b ecommerce': { key: 'yearsOfB2BEcommerce', type: 'experienceRange' },
+    'b2b e-commerce': { key: 'yearsOfB2BEcommerce', type: 'experienceRange' },
+
     // Currently Employed Questions (auto-answer No)
     'currently employed with': { key: 'currentlyEmployed', type: 'radio' },
     'are you currently employed': { key: 'currentlyEmployed', type: 'radio' },
 
     // Referral Questions (auto-answer No)
-    'referred by': { key: 'referralQuestion', type: 'radio' },
-    'were you referred': { key: 'referralQuestion', type: 'radio' },
+    'referred by': { key: 'referralQuestion', type: 'radio', fixedValue: 'No' },
+    'were you referred': { key: 'referralQuestion', type: 'radio', fixedValue: 'No' },
+    'were you referred by a': { key: 'referralQuestion', type: 'radio', fixedValue: 'No' },
     'who referred you': { key: 'referralName', type: 'text' },
     'if so, who referred you': { key: 'referralName', type: 'text' },
 
@@ -64,11 +119,17 @@
     'sms consent': { key: 'smsConsent', type: 'radio' },
     'text message consent': { key: 'smsConsent', type: 'radio' },
 
-    // Acknowledgment Questions (auto-answer Yes)
-    'acknowledge your understanding': { key: 'acknowledgmentQuestion', type: 'radio' },
-    'please acknowledge': { key: 'acknowledgmentQuestion', type: 'radio' },
-    'acknowledge and agree': { key: 'acknowledgmentQuestion', type: 'radio' },
-    'required to work onsite': { key: 'acknowledgmentQuestion', type: 'radio' },
+    // Acknowledgment Questions (auto-answer "I agree" or Yes)
+    'acknowledge your understanding': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'please acknowledge': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'acknowledge and agree': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'required to work onsite': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'acknowledgment statement': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'following is an acknowledgment': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'equal opportunity employer': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'religious organization': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'must commit to partner': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
+    'employees must commit': { key: 'acknowledgmentQuestion', type: 'agreementRadio', fixedValue: 'I agree' },
 
     // Years of Experience Questions
     'years of software development': { key: 'yearsOfSoftwareDevelopment', type: 'text' },
@@ -84,18 +145,26 @@
     'availability': { key: 'availableTimes', type: 'text' },
     'when are you available': { key: 'availableTimes', type: 'text' },
 
-    // Demographics
+    // Demographics - Gender
     'gender': { key: 'gender', type: 'radio', demographic: true },
-    'ethnicity': { key: 'ethnicity', type: 'select', demographic: true },
-    'race': { key: 'ethnicity', type: 'select', demographic: true },
+
+    // Demographics - Ethnic Origin (derives from ethnicity setting)
+    'ethnic origin': { key: 'ethnicity', type: 'ethnicOrigin', demographic: true },
+
+    // Demographics - Race/Ethnicity
+    'ethnicity': { key: 'ethnicity', type: 'raceSelect', demographic: true },
+    'race': { key: 'ethnicity', type: 'raceSelect', demographic: true },
 
     // Veteran Status
-    'veteran': { key: 'veteranStatus', type: 'radio', demographic: true },
-    'vevraa': { key: 'veteranStatus', type: 'radio', demographic: true },
+    'veteran': { key: 'veteranStatus', type: 'veteranRadio', demographic: true },
+    'protected veteran': { key: 'veteranStatus', type: 'veteranRadio', demographic: true },
+    'vevraa': { key: 'veteranStatus', type: 'veteranRadio', demographic: true },
 
     // Disability
-    'disability': { key: 'disabilityStatus', type: 'radio', demographic: true },
-    'form cc-305': { key: 'disabilityStatus', type: 'radio', demographic: true },
+    'disability': { key: 'disabilityStatus', type: 'disabilityRadio', demographic: true },
+    'form cc-305': { key: 'disabilityStatus', type: 'disabilityRadio', demographic: true },
+    'please choose one of the options below': { key: 'disabilityStatus', type: 'disabilityRadio', demographic: true },
+    'please check one of the boxes below': { key: 'disabilityStatus', type: 'disabilityRadio', demographic: true },
 
     // Signature fields
     'your name': { key: 'fullName', type: 'text', demographic: true },
@@ -166,13 +235,18 @@
         }
       }
 
-      // Find all question items on the page
-      const questionItems = document.querySelectorAll('.ia-Questions-item, [class*="Questions-item"]');
+      // Find all question items on the page (both regular questions and demographic questions)
+      const questionItems = document.querySelectorAll('.ia-Questions-item, [class*="Questions-item"], [data-testid="single-select-question"]');
 
       questionItems.forEach(item => {
         const filled = processQuestionItem(item, settings);
         if (filled) filledCount++;
       });
+
+      // Handle demographic questions that may appear dynamically
+      if (settings.fillDemographics) {
+        filledCount += fillDemographicQuestions(settings);
+      }
 
       // Also try direct field detection for pages without question item wrappers
       filledCount += fillDirectFields(settings);
@@ -416,15 +490,17 @@
 
         let value;
 
-        // Handle special cases with hardcoded values
-        if (config.key === 'requireSponsorship') {
-          value = 'No'; // Always answer No for sponsorship requirement
+        // Handle fixed values (always use this value regardless of settings)
+        if (config.fixedValue) {
+          value = config.fixedValue;
         } else if (config.key === 'smsConsent') {
           value = 'Yes'; // Always answer Yes for SMS consent
         } else if (config.key === 'referralName') {
           value = 'N/A'; // Always answer N/A for referral name
         } else if (config.key === 'howDidYouHear') {
           value = 'Indeed.com'; // Always answer Indeed.com for "How did you hear about this job?"
+        } else if (config.key === 'country') {
+          value = settings.country || 'United States'; // Default to United States
         } else if (config.key === 'autoDate') {
           value = settings.autoFillDate !== false ? getTodayDate() : null;
         } else {
@@ -433,7 +509,7 @@
 
         if (!value) continue;
 
-        return fillField(item, config.type, value);
+        return fillField(item, config.type, value, settings);
       }
     }
 
@@ -441,7 +517,7 @@
   }
 
   // Fill a field based on its type
-  function fillField(container, type, value) {
+  function fillField(container, type, value, settings = {}) {
     try {
       switch (type) {
         case 'text':
@@ -454,6 +530,34 @@
           return fillDateField(container, value);
         case 'combobox':
           return fillComboboxField(container, value);
+        case 'education':
+          return fillEducationField(container, value);
+        case 'educationAuto':
+          return fillEducationAutoField(container, value);
+        case 'stateText':
+          return fillStateTextField(container, value);
+        case 'countryText':
+          return fillCountryTextField(container, value);
+        case 'securityClearanceSelect':
+          return fillSecurityClearanceSelectField(container, value);
+        case 'workSetting':
+          return fillWorkSettingField(container, value);
+        case 'experienceRange':
+          return fillExperienceRangeField(container, value);
+        case 'ethnicOrigin':
+          return fillEthnicOriginField(container, value);
+        case 'raceSelect':
+          return fillRaceSelectField(container, value);
+        case 'veteranRadio':
+          return fillVeteranRadioField(container, value);
+        case 'disabilityRadio':
+          return fillDisabilityRadioField(container, value);
+        case 'howDidYouHearSelect':
+          return fillHowDidYouHearField(container, value);
+        case 'countrySelect':
+          return fillCountrySelectField(container, value);
+        case 'agreementRadio':
+          return fillAgreementRadioField(container, value);
         default:
           return false;
       }
@@ -610,6 +714,599 @@
     }, 100);
 
     return true;
+  }
+
+  // Fill education level radio field
+  function fillEducationField(container, value) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    // Map extension values to label text patterns
+    const educationMap = {
+      'high_school': ['high school', 'ged', 'diploma'],
+      'associates': ['associate'],
+      'bachelors': ['bachelor'],
+      'graduate': ['graduate', 'master', 'phd', 'doctorate']
+    };
+
+    const patterns = educationMap[value] || [];
+
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+
+      // Check if label text matches any of our patterns
+      if (patterns.some(p => labelText.includes(p))) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Fill education level - auto-detect radio or select dropdown
+  function fillEducationAutoField(container, value) {
+    // First check for select dropdown
+    const select = container.querySelector('select');
+    if (select) {
+      return fillEducationSelectField(container, value);
+    }
+
+    // Fall back to radio buttons
+    return fillEducationField(container, value);
+  }
+
+  // Fill education level select dropdown
+  function fillEducationSelectField(container, value) {
+    const select = container.querySelector('select');
+    if (!select) return false;
+
+    // Map extension values to dropdown label patterns
+    const educationMap = {
+      'high_school': ['high school', 'hs diploma', 'ged', 'diploma', 'equivalent'],
+      'associates': ['associate', 'aa degree'],
+      'bachelors': ['bachelor', 'bs degree', 'ba degree'],
+      'graduate': ['graduate', 'master', 'ma degree', 'mba', 'phd', 'doctorate']
+    };
+
+    const patterns = educationMap[value] || [];
+    const options = Array.from(select.options);
+
+    for (const option of options) {
+      const label = option.label?.toLowerCase() || '';
+      const text = option.text?.toLowerCase() || '';
+
+      // Check if option matches any of our patterns
+      if (patterns.some(p => label.includes(p) || text.includes(p))) {
+        select.value = option.value;
+        triggerEvents(select);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Fill State as text field (converts abbreviation to full name if needed)
+  function fillStateTextField(container, value) {
+    const input = container.querySelector('input[type="text"], input:not([type])');
+    if (!input || input.value) return false;
+
+    // State abbreviation to full name map
+    const stateNames = {
+      'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+      'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+      'DC': 'District of Columbia', 'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii',
+      'ID': 'Idaho', 'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa',
+      'KS': 'Kansas', 'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine',
+      'MD': 'Maryland', 'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota',
+      'MS': 'Mississippi', 'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska',
+      'NV': 'Nevada', 'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico',
+      'NY': 'New York', 'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio',
+      'OK': 'Oklahoma', 'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island',
+      'SC': 'South Carolina', 'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas',
+      'UT': 'Utah', 'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington',
+      'WV': 'West Virginia', 'WI': 'Wisconsin', 'WY': 'Wyoming'
+    };
+
+    // If value is an abbreviation, convert to full name
+    const stateValue = stateNames[value.toUpperCase()] || value;
+    setInputValue(input, stateValue);
+    return true;
+  }
+
+  // Fill Country as text field
+  function fillCountryTextField(container, value) {
+    const input = container.querySelector('input[type="text"], input:not([type])');
+    if (!input || input.value) return false;
+
+    // Default to "United States" if no value
+    const countryValue = value || 'United States';
+    setInputValue(input, countryValue);
+    return true;
+  }
+
+  // Fill Security Clearance Level dropdown
+  function fillSecurityClearanceSelectField(container, value) {
+    const select = container.querySelector('select');
+    if (!select) return false;
+
+    // If no value, select "N/A" or first option
+    if (!value) {
+      const naOption = Array.from(select.options).find(opt =>
+        opt.label?.toLowerCase() === 'n/a' || opt.text?.toLowerCase() === 'n/a'
+      );
+      if (naOption) {
+        select.value = naOption.value;
+        triggerEvents(select);
+        return true;
+      }
+      return false;
+    }
+
+    // Map setting values to dropdown labels
+    const clearanceMap = {
+      'none': ['n/a', 'none'],
+      'secret': ['secret'],
+      'top_secret': ['top secret'],
+      'ts_sci': ['top secret/sci', 'ts/sci'],
+      'ts_sci_poly': ['poly', 'polygraph']
+    };
+
+    const patterns = clearanceMap[value] || [value.toLowerCase()];
+    const options = Array.from(select.options);
+
+    for (const option of options) {
+      const label = option.label?.toLowerCase() || '';
+      const text = option.text?.toLowerCase() || '';
+
+      for (const pattern of patterns) {
+        if (label.includes(pattern) || text.includes(pattern)) {
+          select.value = option.value;
+          triggerEvents(select);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // Fill work setting preference radio field (always "No preference")
+  function fillWorkSettingField(container, value) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    const valueLower = value.toLowerCase();
+
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+
+      // Match by label text containing the value
+      if (labelText.includes(valueLower)) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Fill experience range radio field (maps numeric years to ranges)
+  function fillExperienceRangeField(container, value) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    const years = parseInt(value, 10);
+    if (isNaN(years)) return false;
+
+    // Collect all radio options with their labels and parsed ranges
+    const options = [];
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+      options.push({ radio, labelText });
+    }
+
+    // Try to find the best matching range
+    for (const { radio, labelText } of options) {
+      // Check for "None" or "0" for 0 years
+      if (years === 0 && (labelText.includes('none') || labelText === '0')) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+
+      // Check for "Less than X years"
+      const lessThanMatch = labelText.match(/less than (\d+)/);
+      if (lessThanMatch) {
+        const threshold = parseInt(lessThanMatch[1], 10);
+        if (years < threshold) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+        continue;
+      }
+
+      // Check for "X+ years" or "X or more"
+      const plusMatch = labelText.match(/(\d+)\+|(\d+) or more|(\d+)\s*years or more/);
+      if (plusMatch) {
+        const threshold = parseInt(plusMatch[1] || plusMatch[2] || plusMatch[3], 10);
+        if (years >= threshold) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+        continue;
+      }
+
+      // Check for "X-Y years" or "X–Y years" (en-dash)
+      const rangeMatch = labelText.match(/(\d+)\s*[-–]\s*(\d+)/);
+      if (rangeMatch) {
+        const min = parseInt(rangeMatch[1], 10);
+        const max = parseInt(rangeMatch[2], 10);
+        if (years >= min && years <= max) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
+    }
+
+    // Fallback: if years > 0 but no match, try to find highest available option
+    if (years > 0) {
+      // Find the option with the highest number
+      let bestOption = null;
+      let bestThreshold = -1;
+
+      for (const { radio, labelText } of options) {
+        const plusMatch = labelText.match(/(\d+)\+/);
+        if (plusMatch) {
+          const threshold = parseInt(plusMatch[1], 10);
+          if (threshold > bestThreshold) {
+            bestThreshold = threshold;
+            bestOption = radio;
+          }
+        }
+      }
+
+      if (bestOption) {
+        bestOption.checked = true;
+        triggerEvents(bestOption);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Fill ethnic origin radio field (Hispanic/Latino vs Not Hispanic/Latino)
+  // Derives from the ethnicity setting
+  function fillEthnicOriginField(container, ethnicityValue) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    // Map our ethnicity setting to ethnic origin
+    // If ethnicity is "Hispanic or Latino" (value 1), select Hispanic
+    // Otherwise select "Not Hispanic or Latino" or "Decline" based on setting
+    let targetValue;
+    if (ethnicityValue === '1' || ethnicityValue === 'Hispanic or Latino') {
+      targetValue = 'hispanic';
+    } else if (ethnicityValue === '8' || ethnicityValue === 'decline' || ethnicityValue === 'I decline to identify') {
+      targetValue = 'decline';
+    } else {
+      targetValue = 'not hispanic';
+    }
+
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+      const radioValue = radio.value?.toLowerCase() || '';
+
+      if (targetValue === 'hispanic' && (labelText.includes('hispanic/latino') || radioValue.includes('hispanic or latino'))) {
+        if (!labelText.includes('not ')) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      } else if (targetValue === 'not hispanic' && (labelText.includes('not hispanic') || radioValue.includes('not hispanic'))) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      } else if (targetValue === 'decline' && (labelText.includes('decline') || radioValue === 'decline')) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Fill race select dropdown for demographic questions
+  function fillRaceSelectField(container, value) {
+    // Try to find a select dropdown first
+    const select = container.querySelector('select');
+    if (select) {
+      // Map numeric ethnicity values to text
+      const raceMap = {
+        '1': 'Hispanic or Latino',
+        '2': 'White',
+        '3': 'Black or African American',
+        '4': 'Native Hawaiian or Pacific Islander',
+        '5': 'Asian',
+        '6': 'American Indian or Alaska Native',
+        '7': 'Two or More',
+        '8': 'Decline'
+      };
+
+      const targetText = raceMap[value] || value;
+      const options = Array.from(select.options);
+
+      for (const option of options) {
+        const optionText = option.text?.toLowerCase() || '';
+        const optionValue = option.value?.toLowerCase() || '';
+        const targetLower = targetText.toLowerCase();
+
+        if (optionText.includes(targetLower) || optionValue.includes(targetLower) ||
+            (targetLower === 'white' && optionValue === 'white') ||
+            (targetLower.includes('black') && optionText.includes('black')) ||
+            (targetLower.includes('asian') && optionText.includes('asian')) ||
+            (targetLower.includes('native hawaiian') && optionText.includes('native hawaiian')) ||
+            (targetLower.includes('american indian') && optionText.includes('american indian')) ||
+            (targetLower.includes('two or more') && optionText.includes('two or more')) ||
+            (targetLower.includes('decline') && (optionText.includes('decline') || optionValue === 'decline'))) {
+          select.value = option.value;
+          triggerEvents(select);
+          return true;
+        }
+      }
+    }
+
+    // Fallback to radio buttons if no select found
+    return fillSelectField(container, value);
+  }
+
+  // Fill veteran status radio for demographic questions
+  function fillVeteranRadioField(container, value) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    // Map our veteranStatus setting values to radio values
+    // 51 = protected veteran (Yes), 52 = not protected (No), 53 = decline
+    const valueMap = {
+      '51': ['yes', 'protected'],
+      '52': ['no'],
+      '53': ['decline', 'do not wish']
+    };
+
+    const targets = valueMap[value] || [value.toLowerCase()];
+
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+      const radioValue = radio.value?.toLowerCase() || '';
+
+      for (const target of targets) {
+        if (labelText.includes(target) || radioValue.includes(target) || radioValue === target) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // Fill disability status radio for demographic questions
+  function fillDisabilityRadioField(container, value) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    // Map our disabilityStatus setting values to radio values
+    // 1 = have disability (Disabled), 2 = no disability (NotDisabled), 3 = decline
+    const valueMap = {
+      '1': ['yes', 'have a disability', 'disabled'],
+      '2': ['no', 'do not have', 'notdisabled'],
+      '3': ['decline', 'do not want', 'i do not want']
+    };
+
+    const targets = valueMap[value] || [value.toLowerCase()];
+
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+      const radioValue = radio.value?.toLowerCase() || '';
+
+      for (const target of targets) {
+        if (labelText.includes(target) || radioValue.includes(target) || radioValue === target) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // Fill "How did you hear about this position" dropdown/text field
+  // Always selects "Indeed" if available in dropdown, or fills "Indeed.com" in text field
+  function fillHowDidYouHearField(container, value) {
+    // First try to find a select dropdown
+    const select = container.querySelector('select');
+    if (select) {
+      const options = Array.from(select.options);
+
+      // Look for "Indeed" option (case insensitive)
+      const indeedOption = options.find(opt => {
+        const label = opt.label?.toLowerCase() || '';
+        const text = opt.text?.toLowerCase() || '';
+        return label === 'indeed' || text === 'indeed' ||
+               label.includes('indeed') || text.includes('indeed');
+      });
+
+      if (indeedOption) {
+        select.value = indeedOption.value;
+        triggerEvents(select);
+        return true;
+      }
+
+      // Fallback: look for "Job Board" or "Online" options
+      const fallbackOption = options.find(opt => {
+        const label = opt.label?.toLowerCase() || '';
+        return label.includes('job board') || label.includes('online');
+      });
+
+      if (fallbackOption) {
+        select.value = fallbackOption.value;
+        triggerEvents(select);
+        return true;
+      }
+    }
+
+    // If no select, try text field
+    const input = container.querySelector('input[type="text"], input:not([type])');
+    if (input && !input.value) {
+      setInputValue(input, 'Indeed.com');
+      return true;
+    }
+
+    return false;
+  }
+
+  // Fill country selection dropdown
+  // Defaults to "United States" unless a different country is configured
+  function fillCountrySelectField(container, value) {
+    const select = container.querySelector('select');
+    if (!select) return false;
+
+    // Default to "United States" if no value provided
+    const targetCountry = value || 'United States';
+    const targetLower = targetCountry.toLowerCase();
+
+    const options = Array.from(select.options);
+
+    // Try to find exact match first
+    let option = options.find(opt => {
+      const label = opt.label?.toLowerCase() || '';
+      const text = opt.text?.toLowerCase() || '';
+      return label === targetLower || text === targetLower;
+    });
+
+    // If no exact match, try partial match
+    if (!option) {
+      option = options.find(opt => {
+        const label = opt.label?.toLowerCase() || '';
+        const text = opt.text?.toLowerCase() || '';
+        return label.includes(targetLower) || text.includes(targetLower);
+      });
+    }
+
+    if (option) {
+      select.value = option.value;
+      triggerEvents(select);
+      return true;
+    }
+
+    return false;
+  }
+
+  // Fill agreement/acknowledgment radio fields
+  // Selects "I agree" or equivalent option
+  function fillAgreementRadioField(container, value) {
+    const radios = container.querySelectorAll('input[type="radio"]');
+    if (!radios.length) return false;
+
+    // Look for the agreement option
+    const agreePatterns = ['i agree', 'agree', 'yes', 'accept'];
+
+    for (const radio of radios) {
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+
+      // Check if this is an agreement option (not a disagreement)
+      const isDisagree = labelText.includes('not in full agreement') ||
+                         labelText.includes('do not agree') ||
+                         labelText.includes('disagree');
+
+      if (isDisagree) continue;
+
+      // Check if this matches an agree pattern
+      for (const pattern of agreePatterns) {
+        if (labelText.includes(pattern) || labelText === pattern) {
+          radio.checked = true;
+          triggerEvents(radio);
+          return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
+  // Handle demographic questions that may appear dynamically
+  function fillDemographicQuestions(settings) {
+    let count = 0;
+
+    // Find all demographic question containers
+    const demographicContainers = document.querySelectorAll('[class*="demographic-questions"]');
+
+    demographicContainers.forEach(container => {
+      // Find the label text
+      const labelEl = container.querySelector('[data-testid="single-select-question-label"] [data-testid="safe-markup"]') ||
+                      container.querySelector('[data-testid="safe-markup"]') ||
+                      container.querySelector('label');
+
+      if (!labelEl) return;
+
+      const labelText = labelEl.textContent.toLowerCase().trim();
+
+      // Handle Ethnic Origin
+      if (labelText.includes('ethnic origin') && settings.ethnicity) {
+        if (fillEthnicOriginField(container, settings.ethnicity)) {
+          count++;
+        }
+      }
+
+      // Handle Race dropdown
+      if ((labelText === 'race' || labelText.includes('race')) && settings.ethnicity) {
+        if (fillRaceSelectField(container, settings.ethnicity)) {
+          count++;
+        }
+      }
+
+      // Handle Veteran status
+      if (labelText.includes('veteran') && settings.veteranStatus) {
+        if (fillVeteranRadioField(container, settings.veteranStatus)) {
+          count++;
+        }
+      }
+
+      // Handle Disability status (including "Please choose one of the options below:")
+      if ((labelText.includes('disability') || labelText.includes('please choose one of the options below')) && settings.disabilityStatus) {
+        // Check if it's actually a disability question by looking at radio values
+        const radios = container.querySelectorAll('input[type="radio"]');
+        const hasDisabilityOptions = Array.from(radios).some(r =>
+          r.value?.toLowerCase().includes('disabled') ||
+          r.value?.toLowerCase().includes('notdisabled')
+        );
+
+        if (hasDisabilityOptions || labelText.includes('disability')) {
+          if (fillDisabilityRadioField(container, settings.disabilityStatus)) {
+            count++;
+          }
+        }
+      }
+    });
+
+    return count;
   }
 
   // Direct field detection for pages without question wrappers
@@ -790,10 +1487,44 @@
 
   // Also check when URL changes (Indeed uses client-side navigation)
   let lastUrl = location.href;
-  new MutationObserver(() => {
+  let demographicDebounce = null;
+
+  new MutationObserver((mutations) => {
+    // Handle URL changes
     if (location.href !== lastUrl) {
       lastUrl = location.href;
       setTimeout(checkAutoFill, 1000);
+      return;
+    }
+
+    // Check for dynamically appearing demographic questions
+    // This handles the Race dropdown that appears after selecting Ethnic Origin
+    const hasDemographicChanges = mutations.some(mutation => {
+      return Array.from(mutation.addedNodes).some(node => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return false;
+        return node.matches?.('[class*="demographic-questions"]') ||
+               node.querySelector?.('[class*="demographic-questions"]') ||
+               node.matches?.('select[data-testid="single-select-question-select"]') ||
+               node.querySelector?.('select[data-testid="single-select-question-select"]');
+      });
+    });
+
+    if (hasDemographicChanges) {
+      // Debounce to avoid multiple rapid fills
+      clearTimeout(demographicDebounce);
+      demographicDebounce = setTimeout(async () => {
+        try {
+          const settings = await chrome.storage.sync.get(null);
+          if (settings.fillDemographics) {
+            const filled = fillDemographicQuestions(settings);
+            if (filled > 0) {
+              console.log(`Indeed Autofiller: Filled ${filled} dynamic demographic field(s)`);
+            }
+          }
+        } catch (error) {
+          console.error('Indeed Autofiller: Error filling dynamic demographic questions', error);
+        }
+      }, 500);
     }
   }).observe(document.body, { subtree: true, childList: true });
 

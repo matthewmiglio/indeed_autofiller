@@ -1,8 +1,8 @@
 // Field IDs to save/load
 const FIELDS = {
-  contact: ['phone', 'address', 'city', 'cityState', 'state', 'zipCode'],
-  experience: ['jobTitle', 'companyName', 'yearsOfSoftwareDevelopment', 'yearsOfOOP', 'yearsOfPHP', 'yearsOfSoftwareArchitecture', 'yearsOfLeadership', 'yearsOfTechnicalDrawing', 'yearsOfRequirementsGathering', 'availableTimes'],
-  questions: ['linkedinUrl', 'githubUrl', 'securityClearance', 'backgroundCheck', 'authorizedToWork', 'overAge18', 'currentlyEmployed', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
+  contact: ['phone', 'address', 'city', 'cityState', 'state', 'zipCode', 'country'],
+  experience: ['jobTitle', 'companyName', 'middleName', 'degreeMajor', 'securityClearanceLevel', 'yearsOfSoftwareDevelopment', 'yearsOfOOP', 'yearsOfPHP', 'yearsOfSoftwareArchitecture', 'yearsOfLeadership', 'yearsOfTechnicalDrawing', 'yearsOfRequirementsGathering', 'yearsOfJavaScript', 'yearsOfB2BEcommerce', 'availableTimes'],
+  questions: ['linkedinUrl', 'githubUrl', 'authorizedToWork', 'requireSponsorship', 'overAge18', 'educationLevel', 'securityClearance', 'backgroundCheck', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
   demographics: ['fullName', 'gender', 'ethnicity', 'veteranStatus', 'disabilityStatus'],
   settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue', 'autoSubmitReview', 'autoCloseAfterSubmit']
 };
