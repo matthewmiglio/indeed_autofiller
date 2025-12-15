@@ -280,27 +280,44 @@
       if (submitBtn) {
         const buttonText = submitBtn.textContent.toLowerCase();
         if (buttonText.includes('submit') && buttonText.includes('application')) {
-          console.log('Indeed Autofiller: Clicking submit button on review page');
-          submitBtn.click();
+          console.log('Indeed Autofiller: Found submit button, scrolling into view...');
+
+          // Scroll the button into view
+          submitBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Wait for scroll to complete and button to be clickable
+          setTimeout(() => {
+            console.log('Indeed Autofiller: Clicking submit button on review page');
+            submitBtn.click();
+          }, 800);
+
           return true;
         }
       }
       return false;
     };
 
-    // Try immediately
-    if (findAndClickSubmit()) {
-      return true;
-    }
+    // First scroll to bottom of page to ensure all content is loaded
+    console.log('Indeed Autofiller: Scrolling to bottom of review page...');
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 
-    // If button not found, try again after a short delay (button might still be rendering)
+    // Try to find and click after scroll completes
     setTimeout(() => {
       if (findAndClickSubmit()) {
-        console.log('Indeed Autofiller: Submit button found on retry');
+        return;
       }
+
+      // If button still not found, try again after another delay
+      setTimeout(() => {
+        if (findAndClickSubmit()) {
+          console.log('Indeed Autofiller: Submit button found on retry');
+        } else {
+          console.log('Indeed Autofiller: Submit button not found after retries');
+        }
+      }, 1000);
     }, 1000);
 
-    // Return true to indicate we're on a review page (even if button not clicked yet)
+    // Return true to indicate we're on a review page
     return true;
   }
 
