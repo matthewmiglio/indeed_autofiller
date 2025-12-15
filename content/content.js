@@ -18,6 +18,18 @@
     'zip code': { key: 'zipCode', type: 'text' },
     'zip': { key: 'zipCode', type: 'text' },
 
+    // Profile Links
+    'linkedin': { key: 'linkedinUrl', type: 'text' },
+    'linkedin profile': { key: 'linkedinUrl', type: 'text' },
+    'github': { key: 'githubUrl', type: 'text' },
+    'github repo': { key: 'githubUrl', type: 'text' },
+    'github profile': { key: 'githubUrl', type: 'text' },
+
+    // How did you hear about this job (auto-answer "Indeed.com")
+    'how did you hear': { key: 'howDidYouHear', type: 'text' },
+    'how did you find': { key: 'howDidYouHear', type: 'text' },
+    'where did you hear': { key: 'howDidYouHear', type: 'text' },
+
     // Application Questions
     'security clearance': { key: 'securityClearance', type: 'radio' },
     'background check': { key: 'backgroundCheck', type: 'radio' },
@@ -28,7 +40,10 @@
     'legally authorized': { key: 'authorizedToWork', type: 'radio' },
     'work lawfully': { key: 'authorizedToWork', type: 'radio' },
     'require sponsorship': { key: 'requireSponsorship', type: 'radio' },
-    'will you now or in the future require sponsorship': { key: 'requireSponsorship', type: 'radio' },
+    'will you now or in the future require': { key: 'requireSponsorship', type: 'radio' },
+    'uscis immigration case': { key: 'requireSponsorship', type: 'radio' },
+    'employment-based immigration': { key: 'requireSponsorship', type: 'radio' },
+    'h-1b or other': { key: 'requireSponsorship', type: 'radio' },
 
     // Age Verification
     'over the age of 18': { key: 'overAge18', type: 'radio' },
@@ -54,6 +69,20 @@
     'please acknowledge': { key: 'acknowledgmentQuestion', type: 'radio' },
     'acknowledge and agree': { key: 'acknowledgmentQuestion', type: 'radio' },
     'required to work onsite': { key: 'acknowledgmentQuestion', type: 'radio' },
+
+    // Years of Experience Questions
+    'years of software development': { key: 'yearsOfSoftwareDevelopment', type: 'text' },
+    'years of oop': { key: 'yearsOfOOP', type: 'text' },
+    'years of php': { key: 'yearsOfPHP', type: 'text' },
+    'years of software architecture': { key: 'yearsOfSoftwareArchitecture', type: 'text' },
+    'years of leadership': { key: 'yearsOfLeadership', type: 'text' },
+    'years of technical drawing': { key: 'yearsOfTechnicalDrawing', type: 'text' },
+    'years of requirements gathering': { key: 'yearsOfRequirementsGathering', type: 'text' },
+
+    // Availability
+    'available times': { key: 'availableTimes', type: 'text' },
+    'availability': { key: 'availableTimes', type: 'text' },
+    'when are you available': { key: 'availableTimes', type: 'text' },
 
     // Demographics
     'gender': { key: 'gender', type: 'radio', demographic: true },
@@ -156,6 +185,11 @@
       // Handle privacy policy
       if (settings.privacyPolicy === 'yes') {
         fillPrivacyPolicy();
+      }
+
+      // Auto-click "Review your application" button after demographics if enabled
+      if (settings.fillDemographics && filledCount > 0) {
+        handleDemographicsPageContinue();
       }
 
       console.log(`Indeed Autofiller: Filled ${filledCount} fields`);
@@ -321,6 +355,45 @@
     return true;
   }
 
+  // Handle demographics page - auto-click "Review your application" button
+  function handleDemographicsPageContinue() {
+    // Look for demographic indicators on the page
+    const pageText = document.body.textContent.toLowerCase();
+    const hasDemographicContent = pageText.includes('veteran') ||
+                                  pageText.includes('ethnicity') ||
+                                  pageText.includes('race') ||
+                                  pageText.includes('gender') ||
+                                  pageText.includes('disability') ||
+                                  pageText.includes('eeoc') ||
+                                  pageText.includes('vevraa');
+
+    if (!hasDemographicContent) {
+      return false;
+    }
+
+    // Look for "Review your application" button or similar
+    const buttons = document.querySelectorAll('button, [role="button"]');
+    for (const button of buttons) {
+      const buttonText = button.textContent.toLowerCase();
+      if (buttonText.includes('review') && buttonText.includes('application')) {
+        console.log('Indeed Autofiller: Found "Review your application" button after demographics');
+
+        // Scroll button into view
+        button.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Click after a short delay
+        setTimeout(() => {
+          console.log('Indeed Autofiller: Clicking "Review your application" button');
+          button.click();
+        }, 800);
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   // Process a single question item
   function processQuestionItem(item, settings) {
     // Find the label text
@@ -350,6 +423,8 @@
           value = 'Yes'; // Always answer Yes for SMS consent
         } else if (config.key === 'referralName') {
           value = 'N/A'; // Always answer N/A for referral name
+        } else if (config.key === 'howDidYouHear') {
+          value = 'Indeed.com'; // Always answer Indeed.com for "How did you hear about this job?"
         } else if (config.key === 'autoDate') {
           value = settings.autoFillDate !== false ? getTodayDate() : null;
         } else {
