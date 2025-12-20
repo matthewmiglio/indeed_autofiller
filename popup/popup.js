@@ -1,7 +1,7 @@
 // Field IDs to save/load
 const FIELDS = {
   contact: ['phone', 'address', 'city', 'cityState', 'state', 'zipCode', 'country'],
-  experience: ['jobTitle', 'companyName', 'middleName', 'degreeMajor', 'securityClearanceLevel', 'yearsOfSoftwareDevelopment', 'yearsOfOOP', 'yearsOfPHP', 'yearsOfSoftwareArchitecture', 'yearsOfLeadership', 'yearsOfTechnicalDrawing', 'yearsOfRequirementsGathering', 'yearsOfJavaScript', 'yearsOfB2BEcommerce', 'availableTimes'],
+  experience: ['jobTitle', 'companyName', 'middleName', 'degreeMajor', 'securityClearanceLevel', 'yearsOfSoftwareDevelopment', 'yearsOfOOP', 'yearsOfPHP', 'yearsOfSoftwareArchitecture', 'yearsOfLeadership', 'yearsOfTechnicalDrawing', 'yearsOfRequirementsGathering', 'yearsOfJavaScript', 'yearsOfB2BEcommerce'],
   questions: ['linkedinUrl', 'githubUrl', 'authorizedToWork', 'requireSponsorship', 'overAge18', 'educationLevel', 'securityClearance', 'backgroundCheck', 'textOptIn', 'privacyPolicy', 'referralQuestion', 'acknowledgmentQuestion'],
   demographics: ['fullName', 'gender', 'ethnicity', 'veteranStatus', 'disabilityStatus'],
   settings: ['autoFillOnLoad', 'showNotification', 'fillDemographics', 'autoFillDate', 'autoClickResumeContinue', 'autoSubmitReview', 'autoCloseAfterSubmit']
@@ -39,6 +39,93 @@ document.getElementById('clearDataBtn').addEventListener('click', clearAllData);
 document.getElementById('city').addEventListener('input', updateCityState);
 document.getElementById('state').addEventListener('change', updateCityState);
 
+// Availability row handling
+document.getElementById('addAvailabilityRow').addEventListener('click', addAvailabilityRow);
+document.getElementById('availabilityContainer').addEventListener('click', (e) => {
+  if (e.target.classList.contains('btn-remove-row')) {
+    const rows = document.querySelectorAll('.availability-row');
+    if (rows.length > 1) {
+      e.target.closest('.availability-row').remove();
+    }
+  }
+});
+
+function addAvailabilityRow() {
+  const container = document.getElementById('availabilityContainer');
+  const newRow = document.createElement('div');
+  newRow.className = 'availability-row';
+  newRow.innerHTML = `
+    <select class="availability-day">
+      <option value="">Select Day</option>
+      <option value="Weekday">Weekday</option>
+      <option value="Monday">Monday</option>
+      <option value="Tuesday">Tuesday</option>
+      <option value="Wednesday">Wednesday</option>
+      <option value="Thursday">Thursday</option>
+      <option value="Friday">Friday</option>
+    </select>
+    <select class="availability-time">
+      <option value="">Select Time</option>
+      <option value="Anytime (8am - 9pm)">Anytime (8am - 9pm)</option>
+      <option value="Morning (8am - 12pm)">Morning (8am - 12pm)</option>
+      <option value="Afternoon (12pm - 5pm)">Afternoon (12pm - 5pm)</option>
+      <option value="Evening (5pm - 9pm)">Evening (5pm - 9pm)</option>
+    </select>
+    <button type="button" class="btn-remove-row" title="Remove row">×</button>
+  `;
+  container.appendChild(newRow);
+}
+
+function getAvailabilitySlots() {
+  const slots = [];
+  document.querySelectorAll('.availability-row').forEach(row => {
+    const day = row.querySelector('.availability-day').value;
+    const time = row.querySelector('.availability-time').value;
+    if (day && time) {
+      slots.push({ day, time });
+    }
+  });
+  return slots;
+}
+
+function loadAvailabilitySlots(slots) {
+  const container = document.getElementById('availabilityContainer');
+
+  if (!slots || slots.length === 0) {
+    // Keep the default empty row
+    return;
+  }
+
+  // Clear existing rows
+  container.innerHTML = '';
+
+  // Add rows for each saved slot
+  slots.forEach(slot => {
+    const newRow = document.createElement('div');
+    newRow.className = 'availability-row';
+    newRow.innerHTML = `
+      <select class="availability-day">
+        <option value="">Select Day</option>
+        <option value="Weekday" ${slot.day === 'Weekday' ? 'selected' : ''}>Weekday</option>
+        <option value="Monday" ${slot.day === 'Monday' ? 'selected' : ''}>Monday</option>
+        <option value="Tuesday" ${slot.day === 'Tuesday' ? 'selected' : ''}>Tuesday</option>
+        <option value="Wednesday" ${slot.day === 'Wednesday' ? 'selected' : ''}>Wednesday</option>
+        <option value="Thursday" ${slot.day === 'Thursday' ? 'selected' : ''}>Thursday</option>
+        <option value="Friday" ${slot.day === 'Friday' ? 'selected' : ''}>Friday</option>
+      </select>
+      <select class="availability-time">
+        <option value="">Select Time</option>
+        <option value="Anytime (8am - 9pm)" ${slot.time === 'Anytime (8am - 9pm)' ? 'selected' : ''}>Anytime (8am - 9pm)</option>
+        <option value="Morning (8am - 12pm)" ${slot.time === 'Morning (8am - 12pm)' ? 'selected' : ''}>Morning (8am - 12pm)</option>
+        <option value="Afternoon (12pm - 5pm)" ${slot.time === 'Afternoon (12pm - 5pm)' ? 'selected' : ''}>Afternoon (12pm - 5pm)</option>
+        <option value="Evening (5pm - 9pm)" ${slot.time === 'Evening (5pm - 9pm)' ? 'selected' : ''}>Evening (5pm - 9pm)</option>
+      </select>
+      <button type="button" class="btn-remove-row" title="Remove row">×</button>
+    `;
+    container.appendChild(newRow);
+  });
+}
+
 async function loadSettings() {
   try {
     const data = await chrome.storage.sync.get(null);
@@ -54,6 +141,11 @@ async function loadSettings() {
         element.value = data[fieldId] || '';
       }
     });
+
+    // Load availability slots
+    if (data.availabilitySlots) {
+      loadAvailabilitySlots(data.availabilitySlots);
+    }
 
     // Auto-compile City, State combo after loading
     updateCityState();
@@ -77,6 +169,9 @@ async function saveSettings() {
         data[fieldId] = element.value;
       }
     });
+
+    // Save availability slots
+    data.availabilitySlots = getAvailabilitySlots();
 
     await chrome.storage.sync.set(data);
     showStatus('Settings saved!');
@@ -149,6 +244,30 @@ async function clearAllData() {
         element.value = '';
       }
     });
+
+    // Reset availability to single empty row
+    const container = document.getElementById('availabilityContainer');
+    container.innerHTML = `
+      <div class="availability-row">
+        <select class="availability-day">
+          <option value="">Select Day</option>
+          <option value="Weekday">Weekday</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+        </select>
+        <select class="availability-time">
+          <option value="">Select Time</option>
+          <option value="Anytime (8am - 9pm)">Anytime (8am - 9pm)</option>
+          <option value="Morning (8am - 12pm)">Morning (8am - 12pm)</option>
+          <option value="Afternoon (12pm - 5pm)">Afternoon (12pm - 5pm)</option>
+          <option value="Evening (5pm - 9pm)">Evening (5pm - 9pm)</option>
+        </select>
+        <button type="button" class="btn-remove-row" title="Remove row">×</button>
+      </div>
+    `;
 
     showStatus('Data cleared!');
   } catch (error) {

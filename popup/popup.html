@@ -178,11 +178,29 @@
         <input type="number" id="yearsOfB2BEcommerce" placeholder="0" min="0">
       </div>
 
-      <p class="note">Availability</p>
-      <div class="form-group">
-        <label for="availableTimes">Available Times</label>
-        <input type="text" id="availableTimes" placeholder="Weekdays 9am-5pm">
+      <p class="note">Availability (add rows for each time slot)</p>
+      <div id="availabilityContainer">
+        <div class="availability-row">
+          <select class="availability-day">
+            <option value="">Select Day</option>
+            <option value="Weekday">Weekday</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+          </select>
+          <select class="availability-time">
+            <option value="">Select Time</option>
+            <option value="Anytime (8am - 9pm)">Anytime (8am - 9pm)</option>
+            <option value="Morning (8am - 12pm)">Morning (8am - 12pm)</option>
+            <option value="Afternoon (12pm - 5pm)">Afternoon (12pm - 5pm)</option>
+            <option value="Evening (5pm - 9pm)">Evening (5pm - 9pm)</option>
+          </select>
+          <button type="button" class="btn-remove-row" title="Remove row">×</button>
+        </div>
       </div>
+      <button type="button" id="addAvailabilityRow" class="btn btn-small">+ Add Row</button>
     </div>
 
     <!-- Application Questions Tab -->

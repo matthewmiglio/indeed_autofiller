@@ -194,3 +194,56 @@ hr {
 .container::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
+
+/* Availability rows */
+#availabilityContainer {
+  margin-bottom: 8px;
+}
+
+.availability-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+  align-items: center;
+}
+
+.availability-row select {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.availability-row select:focus {
+  outline: none;
+  border-color: #2557a7;
+}
+
+.btn-remove-row {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 0;
+}
+
+.btn-remove-row:hover {
+  background: #c82333;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: #6c757d;
+  color: white;
+}
+
+.btn-small:hover {
+  background: #5a6268;
+}

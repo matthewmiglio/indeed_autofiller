@@ -140,10 +140,11 @@
     'years of technical drawing': { key: 'yearsOfTechnicalDrawing', type: 'text' },
     'years of requirements gathering': { key: 'yearsOfRequirementsGathering', type: 'text' },
 
-    // Availability
-    'available times': { key: 'availableTimes', type: 'text' },
-    'availability': { key: 'availableTimes', type: 'text' },
-    'when are you available': { key: 'availableTimes', type: 'text' },
+    // Availability (multi-row dropdowns)
+    'available times': { key: 'availabilitySlots', type: 'availabilityDropdowns' },
+    'availability': { key: 'availabilitySlots', type: 'availabilityDropdowns' },
+    'when are you available': { key: 'availabilitySlots', type: 'availabilityDropdowns' },
+    'what times are you available': { key: 'availabilitySlots', type: 'availabilityDropdowns' },
 
     // Demographics - Gender
     'gender': { key: 'gender', type: 'radio', demographic: true },
@@ -558,6 +559,8 @@
           return fillCountrySelectField(container, value);
         case 'agreementRadio':
           return fillAgreementRadioField(container, value);
+        case 'availabilityDropdowns':
+          return fillAvailabilityDropdowns(container, value);
         default:
           return false;
       }
@@ -1249,6 +1252,106 @@
     }
 
     return false;
+  }
+
+  // Fill availability dropdown pairs (day + time)
+  // Indeed uses rows with two dropdowns each: day slot and time slot
+  function fillAvailabilityDropdowns(container, slots) {
+    if (!slots || !Array.isArray(slots) || slots.length === 0) return false;
+
+    // Find all select dropdowns - look in the broader page context for availability sections
+    let selects = container.querySelectorAll('select');
+
+    // If we don't find enough selects in the container, look for the availability module
+    if (selects.length < 2) {
+      const availModule = document.querySelector('[class*="apply-questions"]');
+      if (availModule) {
+        selects = availModule.querySelectorAll('select');
+      }
+    }
+
+    if (selects.length < 2) return false;
+
+    let filled = false;
+
+    // Day options - Indeed uses "Weekday", "Monday", etc.
+    const dayKeywords = ['weekday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+    // Time options - Indeed uses "Anytime", "Morning", "Afternoon", "Evening"
+    const timeKeywords = ['anytime', 'morning', 'afternoon', 'evening'];
+
+    // Try to identify which selects are day vs time by their options
+    const selectPairs = [];
+
+    // Group selects into pairs (day, time)
+    for (let i = 0; i < selects.length; i++) {
+      const select = selects[i];
+      const options = Array.from(select.options).map(o => (o.text?.toLowerCase() || o.label?.toLowerCase() || ''));
+
+      // Check if this is a day dropdown (has day names)
+      const isDayDropdown = options.some(opt => dayKeywords.some(d => opt.includes(d)));
+      // Check if this is a time dropdown (has time keywords)
+      const isTimeDropdown = options.some(opt => timeKeywords.some(t => opt.includes(t)));
+
+      if (isDayDropdown) {
+        // Look for the next time dropdown
+        for (let j = i + 1; j < selects.length; j++) {
+          const nextSelect = selects[j];
+          const nextOptions = Array.from(nextSelect.options).map(o => (o.text?.toLowerCase() || o.label?.toLowerCase() || ''));
+          const nextIsTimeDropdown = nextOptions.some(opt => timeKeywords.some(t => opt.includes(t)));
+
+          if (nextIsTimeDropdown) {
+            selectPairs.push({ daySelect: select, timeSelect: nextSelect });
+            i = j; // Skip the time dropdown in the outer loop
+            break;
+          }
+        }
+      }
+    }
+
+    // Fill each pair with our saved slots
+    for (let i = 0; i < Math.min(slots.length, selectPairs.length); i++) {
+      const slot = slots[i];
+      const pair = selectPairs[i];
+
+      if (!slot.day || !slot.time) continue;
+
+      // Fill day dropdown - match by exact value or by text content
+      const dayOption = Array.from(pair.daySelect.options).find(opt => {
+        const value = opt.value?.toLowerCase() || '';
+        const text = opt.text?.toLowerCase() || '';
+        const slotDay = slot.day.toLowerCase();
+        return value === slotDay || text === slotDay || value.includes(slotDay) || text.includes(slotDay);
+      });
+
+      if (dayOption) {
+        pair.daySelect.value = dayOption.value;
+        triggerEvents(pair.daySelect);
+        filled = true;
+      }
+
+      // Fill time dropdown - match by value or partial text
+      // Our saved values are like "Morning (8am - 12pm)" which should match Indeed's options
+      const timeOption = Array.from(pair.timeSelect.options).find(opt => {
+        const value = opt.value?.toLowerCase() || '';
+        const text = opt.text?.toLowerCase() || '';
+        const slotTime = slot.time.toLowerCase();
+
+        // Exact match first
+        if (value === slotTime || text === slotTime) return true;
+
+        // Partial match - extract the time keyword (morning, afternoon, etc.)
+        const timeKeyword = slotTime.split(' ')[0]; // "morning" from "morning (8am - 12pm)"
+        return value.includes(timeKeyword) || text.includes(timeKeyword);
+      });
+
+      if (timeOption) {
+        pair.timeSelect.value = timeOption.value;
+        triggerEvents(pair.timeSelect);
+        filled = true;
+      }
+    }
+
+    return filled;
   }
 
   // Handle demographic questions that may appear dynamically
