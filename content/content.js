@@ -147,7 +147,7 @@
     'what times are you available': { key: 'availabilitySlots', type: 'availabilityDropdowns' },
 
     // Demographics - Gender
-    'gender': { key: 'gender', type: 'radio', demographic: true },
+    'gender': { key: 'gender', type: 'genderRadio', demographic: true },
 
     // Demographics - Ethnic Origin (derives from ethnicity setting)
     'ethnic origin': { key: 'ethnicity', type: 'ethnicOrigin', demographic: true },
@@ -527,6 +527,8 @@
           return fillSelectField(container, value);
         case 'radio':
           return fillRadioField(container, value);
+        case 'genderRadio':
+          return fillGenderRadioField(container, value);
         case 'date':
           return fillDateField(container, value);
         case 'combobox':
@@ -681,6 +683,59 @@
     // Try matching by exact numeric value for demographic fields
     for (const radio of radios) {
       if (radio.value === value) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  // Fill gender radio field for demographic questions
+  // Maps: 1 = Male, 2 = Female, 3 = I decline to identify
+  function fillGenderRadioField(container, value) {
+    // First try to find radios in the container
+    let radios = container.querySelectorAll('input[type="radio"]');
+
+    // If not found, look for the demographic question structure
+    if (!radios.length) {
+      const demographicContainer = document.querySelector('[class*="demographic-questions"] [data-testid="single-select-question"]');
+      if (demographicContainer) {
+        const labelEl = demographicContainer.querySelector('[data-testid="single-select-question-label"]');
+        if (labelEl && labelEl.textContent.toLowerCase().includes('gender')) {
+          radios = demographicContainer.querySelectorAll('input[type="radio"]');
+        }
+      }
+    }
+
+    if (!radios.length) return false;
+
+    // Map our setting values to radio values and label text
+    const genderMap = {
+      '1': { value: '1', labels: ['male'] },
+      '2': { value: '2', labels: ['female'] },
+      '3': { value: '3', labels: ['decline', 'i decline'] }
+    };
+
+    const mapping = genderMap[value];
+    if (!mapping) return false;
+
+    for (const radio of radios) {
+      const radioValue = radio.value;
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`) ||
+                      radio.closest('label');
+      const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
+
+      // Match by value first (most reliable for Indeed's structure)
+      if (radioValue === mapping.value) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+
+      // Fallback: match by label text
+      if (mapping.labels.some(l => labelText.includes(l))) {
         radio.checked = true;
         triggerEvents(radio);
         return true;
@@ -1109,30 +1164,56 @@
 
   // Fill disability status radio for demographic questions
   function fillDisabilityRadioField(container, value) {
-    const radios = container.querySelectorAll('input[type="radio"]');
+    // First try to find radios in the container
+    let radios = container.querySelectorAll('input[type="radio"]');
+
+    // If not found, look for the demographic question structure
+    if (!radios.length) {
+      const demographicContainer = document.querySelector('[class*="demographic-questions"] [data-testid="single-select-question"]');
+      if (demographicContainer) {
+        const labelEl = demographicContainer.querySelector('[data-testid="single-select-question-label"]');
+        if (labelEl && labelEl.textContent.toLowerCase().includes('disability')) {
+          radios = demographicContainer.querySelectorAll('input[type="radio"]');
+        }
+      }
+    }
+
+    // Also try to find by input name containing 'disability'
+    if (!radios.length) {
+      radios = document.querySelectorAll('input[type="radio"][name*="disability"]');
+    }
+
     if (!radios.length) return false;
 
-    // Map our disabilityStatus setting values to radio values
-    // 1 = have disability (Disabled), 2 = no disability (NotDisabled), 3 = decline
-    const valueMap = {
-      '1': ['yes', 'have a disability', 'disabled'],
-      '2': ['no', 'do not have', 'notdisabled'],
-      '3': ['decline', 'do not want', 'i do not want']
+    // Map our disabilityStatus setting values to radio values and label patterns
+    // 1 = have disability, 2 = no disability, 3 = decline
+    const disabilityMap = {
+      '1': { value: '1', labels: ['yes', 'have a disability', 'have had one'] },
+      '2': { value: '2', labels: ['no', 'do not have a disability'] },
+      '3': { value: '3', labels: ['do not want to answer', 'decline'] }
     };
 
-    const targets = valueMap[value] || [value.toLowerCase()];
+    const mapping = disabilityMap[value];
+    if (!mapping) return false;
 
     for (const radio of radios) {
-      const labelEl = container.querySelector(`label[for="${radio.id}"]`);
+      const radioValue = radio.value;
+      const labelEl = container.querySelector(`label[for="${radio.id}"]`) ||
+                      radio.closest('label');
       const labelText = labelEl?.textContent?.toLowerCase().trim() || '';
-      const radioValue = radio.value?.toLowerCase() || '';
 
-      for (const target of targets) {
-        if (labelText.includes(target) || radioValue.includes(target) || radioValue === target) {
-          radio.checked = true;
-          triggerEvents(radio);
-          return true;
-        }
+      // Match by value first (most reliable for Indeed's structure)
+      if (radioValue === mapping.value) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
+      }
+
+      // Fallback: match by label text
+      if (mapping.labels.some(l => labelText.includes(l))) {
+        radio.checked = true;
+        triggerEvents(radio);
+        return true;
       }
     }
 
@@ -1370,6 +1451,13 @@
       if (!labelEl) return;
 
       const labelText = labelEl.textContent.toLowerCase().trim();
+
+      // Handle Gender
+      if (labelText.includes('gender') && settings.gender) {
+        if (fillGenderRadioField(container, settings.gender)) {
+          count++;
+        }
+      }
 
       // Handle Ethnic Origin
       if (labelText.includes('ethnic origin') && settings.ethnicity) {
